@@ -1,43 +1,50 @@
 #pragma once
 #include <bits/stdc++.h>
+#include "../util/buffer.h"
 
 namespace Rem {
     template<typename Tv = int32_t, typename Te = int32_t>
     class Graph {
-        uint32_t m_v = 0;
-        std::vector<Tv> m_wv;
-        struct raw_edge {
-            uint32_t m_from, m_to;
-            Te m_weight;
-        };
         struct edge {
-            uint32_t m_to;
-            Te m_weight;
+            uint32_t m_t;
+            Te m_w;
         };
-        std::vector<raw_edge> m_raw_edges;
-        std::vector<edge> m_edges;
-        std::vector<uint32_t> m_starts;
+        struct raw_edge {
+            uint32_t m_s, m_t;
+            Te m_w;
+        };
+        uint32_t m_v;
+        Tv *m_wv;
+        vector<raw_edge> m_raw_edges;
+        edge *m_edges;
+        uint32_t *m_starts;
+        edge **m_cursor;
     public:
-        const uint32_t& size() { return m_v; }
-        template <typename Callback>
-        void operator()(uint32_t from, Callback&& call) const {
-            auto* first = m_edges.data() + m_starts[from], * last = m_edges.data() + m_starts[from + 1];
-            for (auto it = first; it != last; ++it) call(it->m_to, it->m_weight);
+        Graph(uint32_t v, uint32_t e) : m_v(v) {
+            m_wv = Buffer::allocate<Tv>(m_v);
+            m_raw_edges.m_data = Buffer::allocate<raw_edge>(e);
+            m_edges = Buffer::allocate<edge>(e);
+            m_starts = Buffer::allocate<uint32_t>(m_v + 1);
+            edge **placeholder = Buffer::allocate<edge *>();
+            m_cursor = Buffer::allocate<edge *>(m_v + 1);
+            reset();
         }
-        Tv& operator[](uint32_t i) { return m_wv[i]; }
-        void resize(uint32_t v, uint32_t e) {
-            if (!(m_v = v)) return;
-            m_wv.resize(m_v);
-            m_raw_edges.clear(), m_raw_edges.reserve(e), m_starts.assign(m_v + 1, 0);
+        void reset() {
+            m_raw_edges.m_size = 0;
+            memset(m_starts, 0, sizeof(uint32_t) * (m_v + 1));
         }
-        void add_edge(uint32_t s, uint32_t t, Te w) {
-            m_starts[s + 1]++, m_raw_edges.push_back({ s, t, w });
-        }
+        Tv &operator[](uint32_t i) { return m_wv[i]; }
+        const uint32_t &size() { return m_v; }
+        void add_edge(uint32_t s, uint32_t t, Te w) { m_starts[s + 1]++; m_raw_edges.m_data[m_raw_edges.m_size++] = {s, t, w}; }
         void freeze() {
-            for (uint32_t i = 1; i != m_v + 1; i++) m_starts[i] += m_starts[i - 1];
-            m_edges.resize(m_starts.back());
-            auto cursor = m_starts;
-            for (auto& e : m_raw_edges) m_edges[cursor[e.m_from]++] = { e.m_to, e.m_weight };
+            m_cursor[0] = m_edges;
+            for (uint32_t i = 1; i != m_v + 1; i++) m_cursor[i] = m_edges + (m_starts[i] += m_starts[i - 1]);
+            raw_edge *rb = m_raw_edges.m_data + m_raw_edges.m_size;
+            for (raw_edge *e = m_raw_edges.m_data; e != rb; e++) new (m_cursor[e->m_s]++)edge({e->m_t, e->m_w});
+            m_cursor--;
+            m_cursor[0] = m_edges;
         }
+        const edge *left_boundary(uint32_t u) const {return m_cursor[u];}
+        const edge *right_boundary(uint32_t u) const {return m_cursor[u + 1];}
     };
 }

@@ -2,55 +2,33 @@
 #include <bits/stdc++.h>
 
 namespace Rem {
-    template <typename T>
-    struct BufferWithoutCollect {
-    private:
-        static T *s_buf;
-        static uint32_t s_available;
+    class Buffer {
+        static char *s_buf;
+        static char *s_ptr;
     public:
-        static void resize(uint32_t length) {
-            if (s_buf != NULL) std::free(s_buf);
-            s_buf = (T *)std::malloc(sizeof(T) * length);
-            std::memset(s_buf, 0, sizeof(T) * length);
-            s_available = 1;
+        static void reset() { s_ptr = s_buf; }
+        template <typename T>
+        static T *allocate() {
+            T *res = (T *)s_ptr;
+            s_ptr += sizeof(T);
+            return res;
         }
-        static T *null() { return s_buf; }
-        static T *allocate() { return s_buf + s_available++; }
-        static void collect(T* ptr) {}
-        static consteval bool need_clct() { return false; }
-    };
-    template <typename T>
-    T *BufferWithoutCollect<T>::s_buf = NULL;
-    template <typename T>
-    uint32_t BufferWithoutCollect<T>::s_available = 0;
-
-    template <typename T>
-    struct BufferWithCollect {
-    private:
-        static T *s_buf;
-        static T **s_available;
-        static uint32_t s_tail;
-
-    public:
-        static void resize(uint32_t length) {
-            if (s_buf != NULL) std::free(s_buf);
-            s_buf = (T *)std::malloc(sizeof(T) * length);
-            std::memset(s_buf, 0, sizeof(T) * length);
-            if (s_available != NULL) std::free(s_available);
-            s_available = (T **)std::malloc(sizeof(T *) * length);
-            T *ptr = s_buf + 1;
-            for (uint32_t i = 0; i < length; i++) s_available[i] = ptr++;
-            s_tail = length - 2;
+        template <typename T>
+        static T *allocate(uint32_t n) {
+            T *res = (T *)s_ptr;
+            s_ptr += sizeof(T) * n;
+            return res;
         }
-        static T *null() { return s_buf; }
-        static T *allocate() { return s_available[s_tail--]; }
-        static void collect(T *ptr) { s_available[++s_tail] = ptr; }
-        static consteval bool need_clct() { return true; }
+        static uint32_t status() { return (s_ptr - s_buf) / 1048576; }
     };
+#ifndef REM_MAX_BUFFER_SIZE
+#define REM_MAX_BUFFER_SIZE 128
+#endif
+    char *Buffer::s_buf = (char *)std::malloc(REM_MAX_BUFFER_SIZE * 1048576);
+    char *Buffer::s_ptr = s_buf;
     template <typename T>
-    T *BufferWithCollect<T>::s_buf = NULL;
-    template <typename T>
-    T **BufferWithCollect<T>::s_available = NULL;
-    template <typename T>
-    uint32_t BufferWithCollect<T>::s_tail = 0;
+    struct vector {
+        uint32_t m_size;
+        T *m_data;
+    };
 }

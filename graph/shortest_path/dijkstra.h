@@ -21,7 +21,7 @@ namespace Rem {
                 from = heap.top();
                 heap.pop();
                 d = m_distance[from];
-                (*m_graph)(from, [&](uint32_t to, Te w) { if ((to_dis = d + w) < m_distance[to] ? m_distance[to] = to_dis, true : false) heap.push(to); });
+                m_graph->for_edges(from, [&](uint32_t to, Te w) { if ((to_dis = d + w) < m_distance[to] ? m_distance[to] = to_dis, true : false) heap.push(to); });
             }
         }
         const Te& query(uint32_t t) const { return m_distance[t]; }

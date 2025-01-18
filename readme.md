@@ -1,3 +1,7 @@
+# Introduction
+This is my personal template collection for online competitive programming contests, and it has absolutely no advantages but massive disadvantages comparing to other gods' library. Specifically, this is trash.
+
+To somehow maybe accelerate the executing(surely failed), all templates in this shit use a self-defined struct Buffer to allocate memories, and there is literally no boundary checks(or any other checks). So it is necessary to make sure that the inputs and callings are vaild. Also, dont forget to set a proper size for Buffer(the default value is 128 megabytes), and reset the Buffer after each testcases unless its size is calculated enough.
 # Data Structure
 ## Disjoint Set Union
 Initially there are n elements indexed from `0` to `n - 1`, each of them are in a set that contains only themselves. Disjoint set union is a data structure that can achieve following functionalities:
@@ -7,7 +11,7 @@ Initially there are n elements indexed from `0` to `n - 1`, each of them are in 
 
 `The merge operation can be weighted as a number r that creates a directed relationship from element u to element v (also from v to u will be -r).`
 ### methods
-|methods | parameters|||description|complexity|
+|methods|parameters|||description|complexity|
 |:---|:---|:---|:---|:---|:---|
 |constructor|`uint32_t size = 0`</br>the size of dsu||||O(n)|
 |resize|`uint32_t size`</br>the new size of dsu||||O(n)|
@@ -102,7 +106,7 @@ Describe how to initialize the answer of intervals that have a length of 1.
 Here is an example that implements a segment tree that allows add or multiply a number to all elements in an interval and calculates the sum of all elements in an interval:
 ```C++
 #include <bits/stdc++.h>
-#include "templates/data_structure/segment_tree.h"
+#include "competitive-programming-templates/data_structure/segment_tree.h"
 using namespace std;
 
 int64_t k;
@@ -245,5 +249,53 @@ Describe how to initialize the answer of intervals that have a length of 1.
 
 `int32_t pos` the start point of the current interval of length 1.
 ### examples
-
 ### problems
+# Graph
+## Graph
+Graph is the data structure used to save a 0-indexed graph, all other graph algorithm templates are based on it.
+### class template parameters
+|parameter|description|
+|:---|:---|
+|`typename Tv = int32_t`|the type of weight on vertexes|
+|`typename Te = int32_t`|the type of weight on edges|
+### methods
+|methods|parameters|||description|complexity|
+|:---|:---|:---|:---|:---|:---|
+|constructor|`uint32_t v`</br>the number of vertexes|`uint32_t e`</br>the maximum number of edges|||O(v)|
+|reset|||||O(v)|
+|[]|`uint32_t i`</br>|||return the weight of vertex i|O(1)|
+|size||||returns the number of vertexes|O(1)|
+|add_edge|`uint32_t s`</br>the index of start vertex|`uint32_t t`</br>the index of end vertex|`Te w`</br>the weight the edge|add a directed edge from s to t with a weight of w|O(1)|
+|freeze||||preprocess after done adding edges|O(v+e)|
+|left_boundary|`uint32_t u`</br>the index of relative vertex|||return a pointer to the first edge starting from the vertex|O(1)|
+|right_boundary|`uint32_t u`</br>the index of relative vertex|||return a pointer to the last edge starting from the vertex|O(1)|
+### usage
+1. The call of freeze() is needed after done adding edges.
+2. The call of reset() is needed after each test case solved.
+
+To iterate edges starting from vertex u:
+```C++
+auto lb = g.left_boundary(u), rb = g.right_boundary(u);
+for (auto e = lb; e != rb; e++) {
+    //e->m_t is the index of end vertex of the edge
+    //e->m_w is the weight of the edge
+}
+```
+### problems
+[CF1092F](https://codeforces.com/problemset/problem/1092/F)
+### wtfs
+1. after using `#pragma GCC optimize(2)`, it runs slower.
+2. if pre-calculate all boundary pointers for later iteration instead of calculate the pointer each time called (by adding the bias to the start pointer), it runs slower.
+3. placement new is faster than set all members manually.
+# util
+## Buffer
+Buffer is used to manage memories.
+### macros
+`REM_MAX_BUFFER_SIZE`: defines the size(megabytes, default value is 128) of the Buffer.
+### methods
+|methods|parameters|description|complexity|
+|:---|:---|:---|:---|
+|reset|||O(1)|
+|allocate<typename T>||return a pointer to the element|O(1)|
+|allocate<typename T>|`uint32_t n`</br>the number of elements to allocate|return a pointer to the first element|O(1)|
+|status||return the amount(megabytes) of memories used|O(1)|

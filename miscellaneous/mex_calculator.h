@@ -3,9 +3,8 @@
 #include "../data_structure/balanced_binary_tree/size_balanced_tree.h"
 // 6s86
 namespace Rem {
-    template <typename MapType = SizeBalancedTree<uint32_t, uint32_t>>
+    template <typename MapType = SizeBalancedTree<uint32_t, uint32_t >>
     class MexCalculator {
-    private:
         MapType m_starts;
         vector<uint32_t> m_cnt;
         uint32_t m_size;

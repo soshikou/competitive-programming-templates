@@ -104,8 +104,8 @@ namespace Rem {
     public:
         PersistentSegmentTree() { m_roots.push_back(new Node); }
         template <typename T>
-        void build(T *src, int32_t l, int32_t r) { _build(m_root, src, l, r); }
-        void update(int32_t pos, const LazyType &lazy, uint32_t ver = 0) { 
+        void build(T *src, int32_t l, int32_t r) { _build(m_roots[0], src, l, r); }
+        void update(int32_t pos, const LazyType &lazy, uint32_t ver = 0) {
             m_roots.push_back(new Node);
             _update(m_roots[ver], m_roots.back(), pos, lazy);
         }

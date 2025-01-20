@@ -11,16 +11,13 @@ namespace Rem {
         std::vector<Node> m_nodes;
         uint32_t m_size;
     public:
-        DisjointSetUnion(uint32_t size = 0) : m_size(0) { resize(size), reset(); }
-        void resize(uint32_t size) {
-            if (m_size < size) {
-                m_size = size;
-                m_idx.resize(m_size);
-                m_nodes.resize(m_size);
-            }
+        DisjointSetUnion(uint32_t size) : m_size(size) {
+            m_idx.resize(size);
+            m_nodes.resize(size);
+            reset(size);
         }
-        void reset() {
-            for (uint32_t i = 0; i < m_size; i++) {
+        void reset(uint32_t n) {
+            for (uint32_t i = 0; i < n; i++) {
                 m_idx[i] = i;
                 m_nodes[i].m_father = i;
                 m_nodes[i].m_r10p = 0;
@@ -50,8 +47,7 @@ namespace Rem {
             if (nfu.m_rank < nfv.m_rank) {
                 nfu.m_father = fv;
                 nfu.m_r10p = m_nodes[v].m_r10p - m_nodes[u].m_r10p - r;
-            }
-            else {
+            } else {
                 nfv.m_father = fu;
                 nfv.m_r10p = m_nodes[u].m_r10p - m_nodes[v].m_r10p + r;
                 if (nfu.m_rank == nfv.m_rank) nfu.m_rank++;

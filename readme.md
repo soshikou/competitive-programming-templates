@@ -14,13 +14,14 @@ Initially there are n elements indexed from `0` to `n - 1`, each of them are in 
 |methods|parameters|||description|complexity|
 |:---|:---|:---|:---|:---|:---|
 |constructor|`uint32_t size = 0`</br>the size of dsu||||O(n)|
-|resize|`uint32_t size`</br>the new size of dsu||||O(n)|
-|reset||||re-initialize the dsu|O(n)|
+|reset|`uint32_t n`</br>the right boundary need to be reset|||reset the dsu for indexes in [0, n)|O(n)|
 |get_father|`uint32_t u`</br>the index of the element|||returns the set which contains element u|O(log(n))|
 |merge|`uint32_t u`</br>the set contains element u|`uint32_t v`</br>the set contains element v|`int32_t r = 0`</br>the weight from u to v|merge the two sets that contain element u and v respectively|O(log(n))|
 |split|`uint32_t u`</br>the index of the element|||split element u from the set that contains it|O(1)|
 ### problems
-[CF1620E](https://codeforces.com/problemset/problem/1620/E)
+|||||||||||
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|[CF1620E](https://codeforces.com/problemset/problem/1620/E)|[CF2060E](https://codeforces.com/problemset/problem/2060/E)||||||||
 ## Segment Tree
 Segment tree is a data structure that can achieve following functionalities:
 1. Apply some operations to all elements in some intervals of a sequence.
@@ -282,11 +283,43 @@ for (auto e = lb; e != rb; e++) {
 }
 ```
 ### problems
-[CF1092F](https://codeforces.com/problemset/problem/1092/F)
+|||||||||||
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|[CF1092F](https://codeforces.com/problemset/problem/1092/F)||||||||||
 ### wtfs
 1. after using `#pragma GCC optimize(2)`, it runs slower.
 2. if pre-calculate all boundary pointers for later iteration instead of calculate the pointer each time called (by adding the bias to the start pointer), it runs slower.
 3. placement new is faster than set all members manually.
+# math
+## functions
+|function|parameters||||description|complexity|
+|:---|:---|:---|:---|:---|:---|:---|
+|euclid|`T a`|`T b`|||return the greatest common divisor of `a` and `b`|O(log(n))|
+|extended_euclid|`T a`|`T b`|`T &x`|`T &y`|return the greatest common divisor `c` of `a` and `b`. Also set proper value to `x` and `y` that satisfy `ax + by = c`.|O(log(n))|
+|exponentiation|`T n`|`T k`|||return `n ** k`|O(log(k))|
+|exponentiation|`T n`|`T k`|`T p`||return `(n ** k) mod p`|O(log(k))|
+|factorize|`T n`|`std::vector<std::pair<T, T>> &f`|||return `n`'s factors along with their expontent|O(sqrt(n))|
+|get_divisor|`T n`||||get one divisor of `n`||
+|get_divisors|`T n`|`std::vector<T> &r`|||get divisors of `n`|O(sqrt(n))|
+|number_of_divisors|`T n`||||return number of divisors of `n`|O(sqrt(n))|
+|sum_of_divisors|`T n`||||return number of divisors of `n`||
+|euler|`T n`||||euler's totient function returns the number of `x` that is coprime with `n` from `1` to `n - 1`||
+|euler|`T n`|`std::vector<T> &e`|||calculate euler's totient function for all numbers from `1` to `n`||
+|primitive_root|`T n`||||get one primitive root of `n`, return `-1` if there is none.||
+|primitive_root|`T n`||||get all primitive roots of `n`||
+## modint
+### methods
+Let the current value be `x`, and current modulo be `p`.
+|methods|parameters||description|complexity|
+|:---|:---|:---|:---|:---|
+|constructor|`T x = 0`|||O(1)|
+|set_modulo|`T np`||set modulo|O(1)|
+|get_modulo|||return the modulo|O(1)|
+|val|||return the current value|O(1)|
+|inverse|||return `y` that satisfies `x * y(mod p) = 1` when `x` and `p` are coprime.|O(log(p))|
+|exponentiation|`T b`||return `x ** b` |O(log(b))|
+|logarithm|`T a`||return `y` that satisfies `a ** y = x`||
+|root|`T k`|`std::vector<T> &r`|return all `y` that satisfy `y ** k = x`||
 # util
 ## Buffer
 Buffer is used to manage memories.

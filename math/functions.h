@@ -2,8 +2,7 @@
 #include <bits/stdc++.h>
 
 namespace Rem {
-    template <typename T>
-    T euclid(T a, T b) {
+    int64_t euclid(int64_t a, int64_t b) {
         if (!b) return a;
         else return euclid(b, a % b);
     }
@@ -11,20 +10,18 @@ namespace Rem {
     * get the solution for equation ax + by = gcd(a, b) when x is minimum positive integer.
     * return gcd(a, b).
     */
-    template <typename T>
-    T extended_euclid(T a, T b, T &x, T &y) {
+    int64_t extended_euclid(int64_t a, int64_t b, int64_t &x, int64_t &y) {
         if (!b) {
             x = 1;
             y = 0;
             return a;
         }
-        T d = extended_euclid(b, a % b, y, x);
+        int64_t d = extended_euclid(b, a % b, y, x);
         y -= (a / b) * x;
         return d;
     }
-    template <typename T>
-    T exponentiation(T n, T k) {
-        T res = 1;
+    int64_t exponentiation(int64_t n, int64_t k) {
+        int64_t res = 1;
         while (k) {
             if (k & 1) res *= n;
             n *= n;
@@ -32,9 +29,8 @@ namespace Rem {
         }
         return res;
     }
-    template <typename T>
-    T exponentiation(T n, T k, T p) {
-        T res = 1;
+    int64_t exponentiation(int64_t n, int64_t k, int64_t p) {
+        int64_t res = 1;
         while (k) {
             if (k & 1) (res *= n) %= p;
             (n *= n) %= p;
@@ -45,11 +41,10 @@ namespace Rem {
     /*
     * <prime, exponent>
     */
-    template <typename T>
-    void factorize(T n, std::vector<std::pair<T, T> > &f) {
+    void factorize(int64_t n, std::vector<std::pair<int64_t, int64_t> > &f) {
         f.clear();
-        for (T i = 2; i <= n / i; i++) {
-            pair<T, T> p = { i, 0 };
+        for (int64_t i = 2; i <= n / i; i++) {
+            std::pair<int64_t, int64_t> p = { i, 0 };
             while (n % i == 0) {
                 n /= i;
                 p.second++;
@@ -61,29 +56,27 @@ namespace Rem {
     /*
     * Pollard Rho Algorithm.
     */
-    template <typename T>
-    T get_divisor(T n) {
+    int64_t get_divisor(int64_t n) {
         srand(time(0));
-        T s = 0, t = 0, c = (T)1 * rand() % (n - 1) + 1;
-        int stp = 0, goal = 1;
-        T val = 1;
+        int64_t s = 0, t = 0, c = 1LL * rand() % (n - 1) + 1;
+        int64_t stp = 0, goal = 1;
+        int64_t val = 1;
         for (goal = 1;; goal <<= 1, s = t, val = 1) {
             for (stp = 1; stp <= goal; ++stp) {
                 t = (t * t + c) % n;
                 val = val * (s < t ? (t - s) : (s - t)) % n;
                 if ((stp % 127) == 0) {
-                    T d = euclid(val, n);
+                    int64_t d = euclid(val, n);
                     if (1 < d) return d;
                 }
             }
-            T d = euclid(val, n);
+            int64_t d = euclid(val, n);
             if (1 < d) return d;
         }
     }
-    template <typename T>
-    void get_divisors(T n, std::vector<T> &r) {
+    void get_divisors(int64_t n, std::vector<int64_t> &r) {
         r.clear();
-        for (int i = 1; i <= n / i; i++) {
+        for (int64_t i = 1; i <= n / i; i++) {
             if (n % i == 0) {
                 r.push_back(i);
                 if (i != n / i) r.push_back(n / i);
@@ -93,32 +86,29 @@ namespace Rem {
     /*
     * number of divisors is multiplicative function
     */
-    template <typename T>
-    T number_of_divisors(T n) {
-        std::vector<std::pair<T, T> > f;
+    int64_t number_of_divisors(int64_t n) {
+        std::vector<std::pair<int64_t, int64_t> > f;
         factorize(n, f);
-        T ans = 1;
+        int64_t ans = 1;
         for (auto iter : f) ans *= (iter.second + 1);
         return ans;
     }
     /*
     * sum of divisors is multiplicative function
     */
-    template <typename T>
-    T sum_of_divisors(T n) {
-        std::vector<std::pair<T, T> > f;
+    int64_t sum_of_divisors(int64_t n) {
+        std::vector<std::pair<int64_t, int64_t> > f;
         factorize(n, f);
-        T ans = 1;
+        int64_t ans = 1;
         for (auto iter : f) ans *= (exponentiation(iter.first, iter.second + 1) - 1) / (iter.first - 1);
         return ans;
     }
     /*
     * Euler's totient function is multiplicative function
     */
-    template <typename T>
-    T euler(T n) {
-        T ans = n;
-        for (T i = 2; i * i <= ans; i++) {
+    int64_t euler(int64_t n) {
+        int64_t ans = n;
+        for (int64_t i = 2; i * i <= ans; i++) {
             if (n % i == 0) {
                 ans = ans / i * (i - 1);
                 while (n % i == 0) n /= i;
@@ -127,11 +117,10 @@ namespace Rem {
         if (n > 1) ans = ans / n * (n - 1);
         return ans;
     }
-    template <typename T>
-    void euler(T n, std::vector<T> &e) {
+    void euler(int64_t n, std::vector<int64_t> &e) {
         if (e.size() < n + 1) e.resize(n + 1);
-        std::vector<T> v(n + 1, 0), p;
-        for (T i = 2; i <= n; i++) {
+        std::vector<int64_t> v(n + 1, 0), p;
+        for (int64_t i = 2; i <= n; i++) {
             if (v[i] == 0) {
                 v[i] = i;
                 p.push_back(i);
@@ -148,43 +137,41 @@ namespace Rem {
     /*
     * a number  g is called a primitive root modulo n if the length of cycle of g's power equals  phi(n)
     */
-    template <typename T>
-    T primitive_root(T m) {
-        vector<pair<T, T> > fm, fphi;
+    int64_t get_primitive_root(int64_t m) {
+        std::vector<std::pair<int64_t, int64_t >> fm, fphi;
         factorize(m, fm);
-        if (!(m == 2 || m == 4 || (fm.size() == 1 && fm[0].first != 2) || (fm.size() == 2 && fm[0].first == 2 && fm[0].second == 1))) return -1;
-        T phi = euler(m);
+        if (!(m == 2 || m == 4 || (fm.size() == 1 && fm[0].first != 2) || (fm.size() == 2 && fm[0].first == 2 && fm[0].second == 1))) return - 1;
+        int64_t phi = euler(m);
         factorize(phi, fphi);
-        auto ok = [&](T g) {
+        auto ok = [&](int64_t g) {
             if (euclid(g, m) != 1) return false;
             for (auto iter : fphi) {
                 if (exponentiation(g, phi / iter.first, m) == 1) return false;
             }
             return true;
         };
-        for (T g = 1; g < m; g++) {
+        for (int64_t g = 1; g < m; g++) {
             if (ok(g)) return g;
         }
-        return -1;
+        return - 1;
     }
-    template <typename T>
-    void primitive_root(T m, std::vector<T> &r) {
+    void get_primitive_root(int64_t m, std::vector<int64_t> &r) {
         r.clear();
-        std::vector<std::pair<T, T> > fm, fphi;
+        std::vector<std::pair<int64_t, int64_t> > fm, fphi;
         factorize(m, fm);
         if (!(m == 2 || m == 4 || (fm.size() == 1 && fm[0].first != 2) || (fm.size() == 2 && fm[0].first == 2 && fm[0].second == 1))) return;
-        T phi = euler(m);
+        int64_t phi = euler(m);
         factorize(phi, fphi);
-        auto ok = [&](T g) {
+        auto ok = [&](int64_t g) {
             if (euclid(g, m) != 1) return false;
             for (auto iter : fphi) {
                 if (exponentiation(g, phi / iter.first, m) == 1) return false;
             }
             return true;
         };
-        T g = 1;
+        int64_t g = 1;
         for (; g < m; g++) { if (ok(g)) break; }
-        for (T i = 1, p = g; i <= phi; i++) {
+        for (int64_t i = 1, p = g; i <= phi; i++) {
             if (euclid(i, phi) == 1) r.push_back(p);
             (p *= g) %= m;
         }

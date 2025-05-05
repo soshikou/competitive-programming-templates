@@ -3,6 +3,45 @@ This is my personal template collection for online competitive programming conte
 
 To somehow maybe accelerate the executing(surely failed), all templates in this shit use a self-defined struct Buffer to allocate memories, and there is literally no boundary checks(or any other checks). So it is necessary to make sure that the inputs and callings are vaild. Also, dont forget to set a proper size for Buffer(the default value is 128 megabytes), and reset the Buffer after each testcases unless its size is calculated enough.
 # Data Structure
+## Binary Search Tree
+### template parameters
+BST template parameters are defined as follows:
+```C++
+template <typename KeyType = int32_t, typename ValueType = int32_t>
+```
+#### Tips
+1. Class `KeyType` must support operator `<`.
+2. The usage of `KeyType` and `ValueType` are similar to `std::map`.
+### BST Node
+|methods|parameters|description|complexity|
+|:---|:---|:---|:---|
+|key||return key|O(1)|
+|value||return value|O(1)|
+|set|`ValueType v`|set value as v|O(1)|
+|count||the number of elements in BST equal to current key|O(1)|
+|size||the size of sub tree rooted in current Node|O(1)|
+### general BST methods
+|methods|parameters||description|complexity|
+|:---|:---|:---|:---|:---|
+|constructor|||||
+|clear|||remove all data in BST|O(1)|
+|size|||return the size of BST|O(1)|
+|empty|||return a pointer to an empty node of BST, which is the returned pointer when there's no valid key in other methods.|O(1)|
+|insert|`KeyType k`||insert k to BST, return a pointer to k.|O(log(n))|
+|erase|`KeyType k`||erase k from BST if exist (assess m_succeed to check), return the value attached to it.|O(log(n))|
+|update|`KeyType k`|`ValueType v`|attach value v to key k, will create k if not exist, return a pointer to k.|O(log(n))|
+|find|`KeyType k`||return a pointer to k|O(log(n))|
+|rank|`uint32_t k`||return a pointer to the k-th key in increasing order, starting from 0.|O(log(n))|
+|last|`Node *n`||return a pointer to the last element in inorder traversal|O(log(n))|
+|next|`Node *n`||return a pointer to the next element in inorder traversal|O(log(n))|
+|count_less_than|`KeyType k`||return the number of elements less than k|O(log(n))|
+|count_greater_than|`KeyType k`||return the number of elements greater than k|O(log(n))|
+|maximum_less_than|`KeyType k`||return a pointer to the maximum element less than k|O(log(n))|
+|minimum_greater_than|`KeyType k`||return a pointer to the minimum element greater than k|O(log(n))|
+### Splay Tree
+|methods|parameters|description|complexity|
+|:---|:---|:---|:---|
+|splay|`Node* n`|rotate element n to the root of BST|O(log(n))|
 ## Disjoint Set Union
 Initially there are n elements indexed from `0` to `n - 1`, each of them are in a set that contains only themselves. Disjoint set union is a data structure that can achieve following functionalities:
 1. Merge the two sets that contain element u and v respectively.
